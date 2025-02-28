@@ -65,7 +65,7 @@ public class RestaurantArrayImpl implements IRestaurant {
 		int numPeople = 0;
 		for(int i = 0; i < tables.length; i++){
 			if(tables[i] != null){
-				numPeople += tables[i].getNPeople();
+				numPeople += tables[i].getNPeople() + tables[i].getNChildren();
 			}
 		}
 		return numPeople;
@@ -75,7 +75,7 @@ public class RestaurantArrayImpl implements IRestaurant {
 
 	@Override
 	public int getActualCapacity() {
-		return nClients;
+		return maxCapacity - nClients;
 	}
 
 
