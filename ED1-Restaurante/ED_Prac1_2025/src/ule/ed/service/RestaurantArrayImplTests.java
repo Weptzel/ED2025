@@ -32,6 +32,7 @@ public class RestaurantArrayImplTests {
  
 	}
 
+
 	@Test
 	public void testGetTotal1plato() throws Exception{
 		
@@ -51,6 +52,30 @@ public class RestaurantArrayImplTests {
 	    res.addDishToTable(1,"Macarrones", 10.0, 1);
 	    Assert.assertEquals(27.0,res.getFinalPrice(1),0.0);
 	    Assert.assertEquals(27.0,res.getFinalPriceRestaurant(),0.0);    
+	}
+
+	@Test
+	public void testOcuparMesaHastaAforoMax(){
+		res.occupyTable(10, 0);
+		res.occupyTable(10, 0);
+		res.occupyTable(10, 0);
+		res.occupyTable(10, 0);
+		res.occupyTable(10, 0);
+		res.occupyTable(10, 0);
+		res.occupyTable(10, 0);
+		res.occupyTable(10, 0);
+		res.occupyTable(10, 0);
+		Assert.assertEquals(10, res.getActualCapacity());
+
+		res.occupyTable(10, 0);
+		Assert.assertEquals(0, res.getActualCapacity());
+		Assert.assertEquals(100, res.getNumberOfPeople());
+
+		int mesaFallida = res.occupyTable(10, 0);
+		Assert.assertEquals(-1, mesaFallida); // No se debe permitir
+
+		Assert.assertEquals(100, res.getNumberOfPeople());
+
 	}
 	
 }

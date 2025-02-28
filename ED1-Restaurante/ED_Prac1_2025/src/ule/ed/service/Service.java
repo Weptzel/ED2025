@@ -44,7 +44,7 @@ public class Service {
 		 // TODO
 		 double total = 0;
 		 for(int i = 0; i < order.size(); i++){
-			total = order.get(i).getCount() * order.get(i).getPrice();
+			total += order.get(i).getCount() * order.get(i).getPrice();
 		 }
 		return total;
 		
