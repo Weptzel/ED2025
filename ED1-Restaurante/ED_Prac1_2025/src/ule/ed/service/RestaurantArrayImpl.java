@@ -22,16 +22,19 @@ public class RestaurantArrayImpl implements IRestaurant {
 
 	public RestaurantArrayImpl(String name, int nTables,int aforoMax, int discount){ 
 		// Debe crear el array de mesas con todas las posiciones a null
-		
-	
-		
+		this.name = name;
+		this.nTables = nTables;
+		this.maxCapacity = aforoMax;
+		this.nClients = 0;
+		this.discount = discount;
+		this.tables = new Service[nTables];	
 	}
 
 
 
 	@Override
 	public String getName() {
-		return "";
+		return this.name;
 		
 	}
 
@@ -39,50 +42,73 @@ public class RestaurantArrayImpl implements IRestaurant {
 
 	@Override
 	public int getMaxCapacity() {
-		return 0;
+		return this.maxCapacity;
 	}
 
 
 
 	@Override
 	public int getNumberOfChildren() {
-		return 0;
+		int nChildren = 0;
+		for(int i = 0; i < tables.length; i++){
+			if(tables[i] != null){
+				nChildren += tables[i].getNChildren();
+			}
+		}
+		return nChildren;
 	}
 
 
 
 	@Override
 	public int getNumberOfPeople() {
-		return 0;
+		int numPeople = 0;
+		for(int i = 0; i < tables.length; i++){
+			if(tables[i] != null){
+				numPeople += tables[i].getNPeople();
+			}
+		}
+		return numPeople;
 	}
 
 
 
 	@Override
 	public int getActualCapacity() {
-		return 0;
+		return nClients;
 	}
 
 
 
 	@Override
 	public int getNumberTablesOccupied() {
-		
-		return 0;
+		int nTablesOcuppied = 0;
+		for(int i = 0; i < tables.length; i++){
+			if(tables[i] != null && tables[i].getNPeople() != 0){
+				nTablesOcuppied++;
+			}
+		}
+		return nTablesOcuppied;
 	}
 
 
 
 	@Override
 	public int getNumberOfEmptyTables() {
-		return 0;
+		return tables.length - this.getNumberTablesOccupied();
 	}
 
 
 
 	@Override
 	public int getNumberOfTablesWithChildren() {
-		return 0;
+		int nTablesWithChildren = 0;
+		for(int i = 0; i < tables.length; i++){
+			if(tables[i] != null && tables[i].getNChildren() != 0){
+				nTablesWithChildren++;
+			}
+		}
+		return nTablesWithChildren;
 	}
 
 
@@ -90,7 +116,11 @@ public class RestaurantArrayImpl implements IRestaurant {
 	@Override
 	public List<Integer> getNumbersOfEmptyTables() {
 		List<Integer> lista = new ArrayList<>();
-		
+		for(int i = 0; i < tables.length; i++){
+			if(tables[i] != null){
+				lista.add(i + 1);
+			}
+		}
 		return lista;
 	}
 
@@ -98,47 +128,97 @@ public class RestaurantArrayImpl implements IRestaurant {
 
 	@Override
 	public Service getService(int ntable) {
-		return null;
+		if(ntable < 1 || ntable > this.nTables){
+			return null;
+		}
+		Service service = tables[ntable - 1];
+		if(service == null || service.getNPeople() == 0){
+			return null;
+		}
+		return service;
 	}
 
 
 
 	@Override
 	public void addDishToTable(int nTable, String name, double price, int count) {
-	
+		Service service = tables[nTable];
+		Dish dish = new Dish(name, price);
+		for(int i = 0; i < service.getOrder().size(); i++){
+			if(service.getOrder().get(i).equals(dish)){
+				dish.setCount(count + 1);
+			}else{
+				service.getOrder().add(dish);
+			}
+		}
 	}
 
 
 
 	@Override
 	public double getFinalPrice(int ntable) {
-		return 0.0;
+		if(ntable < 1 || ntable > nTables){
+			return 0.0;
+		}
+		Service service = getService(ntable - 1);
+		if(service == null){
+			return 0.0;
+		}
+		double finalPrice = service.getTotalService();
+		return finalPrice * (1 - discount / 100.0);
 	}
 
 
 
 	@Override
 	public double getFinalPriceRestaurant() {
-		return 0.0;
+		double finalPrice = 0.0;
+		for(int i = 0; i < tables.length; i++){
+			finalPrice += getFinalPrice(i + 1);
+		}
+		return finalPrice;
     }
 
 
 
 	@Override
 	public boolean emptyTable(int nTable) {
-	return false;
+		if(nTable < 1 || nTable > nTables || tables[nTable - 1] == null){
+			return false;
+		}
+		tables[nTable - 1] = null;
+		return true;
 	}
 
 
 
 	@Override
 	public int occupyTable(int nPeople, int nChildren) {
-		return 0;
+		int count = 0;
+		if(maxCapacity - getActualCapacity() < nChildren + nPeople){
+			return -1;
+		}
+		while(count < tables.length){
+			if(occupyTable(count + 1, nPeople, nChildren)){
+				tables[count] = new Service(nPeople, nChildren);
+				nClients += nPeople + nChildren;
+				return count;
+			}
+			count++;	
+		}
+			
+		return -2;
 	}
 	
 	@Override
 	public boolean occupyTable(int nTable, int nPeople, int nChildren) {
-		return false;
+		if(nTable < 1 || nTable > nTables || (maxCapacity - getActualCapacity() < nPeople + nChildren)){
+			return false;
+		}
+		if(tables[nTable - 1] != null){
+			return false;
+		}
+		return true;
 		
 	}
 	

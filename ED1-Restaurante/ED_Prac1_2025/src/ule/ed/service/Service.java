@@ -9,6 +9,9 @@ public class Service {
 	 
 	 public Service(int nPeople, int nChildren) {
 		 // TODO
+		 this.nPeople = nPeople;
+		 this.nChildren = nChildren;
+		 order = new ArrayList<Dish>();
 		 }
 	 
 	 
@@ -39,7 +42,11 @@ public class Service {
 	 
 	 public double getTotalService() {
 		 // TODO
-		return 0;
+		 double total = 0;
+		 for(int i = 0; i < order.size(); i++){
+			total = order.get(i).getCount() * order.get(i).getPrice();
+		 }
+		return total;
 		
 			
 	 }
