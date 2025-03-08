@@ -97,7 +97,7 @@ public class RestaurantArrayImpl implements IRestaurant {
 	public List<Integer> getNumbersOfEmptyTables() {
 		List<Integer> lista = new ArrayList<>();
 		for (int i = 0; i < tables.length; i++) {
-			if (tables[i] != null) {
+			if (tables[i] == null) {
 				lista.add(i + 1);
 			}
 		}
@@ -128,7 +128,7 @@ public class RestaurantArrayImpl implements IRestaurant {
 	
 			// Buscamos si el plato ya está en la lista
 			for (Dish dish : service.getOrder()) {
-				if (dish.getName().equals(name)) { 
+				if (dish.getName().equals(name) && dish.getPrice() == price) { 
 					dish.setCount(dish.getCount() + count); // Sumamos la cantidad
 					found = true;
 					break;
@@ -162,7 +162,9 @@ public class RestaurantArrayImpl implements IRestaurant {
 	public double getFinalPriceRestaurant() {
 		double finalPrice = 0.0;
 		for (int i = 0; i < tables.length; i++) {
-			finalPrice += getFinalPrice(i + 1);
+			if(tables[i] != null){
+				finalPrice += getFinalPrice(i + 1);
+			}
 		}
 		return finalPrice;
 	}
@@ -172,13 +174,14 @@ public class RestaurantArrayImpl implements IRestaurant {
 		if (nTable < 1 || nTable > nTables || tables[nTable - 1] == null) {
 			return false;
 		}
+		nClients -= tables[nTable - 1].getNPeople();
 		tables[nTable - 1] = null;
 		return true;
 	}
 
 	@Override
 	public int occupyTable(int nPeople, int nChildren) {
-		if (getActualCapacity() < nChildren + nPeople) {
+		if (getActualCapacity() < nPeople) {
 			return -1;
 		}
 		for (int i = 0; i < tables.length; i++) {
@@ -194,14 +197,18 @@ public class RestaurantArrayImpl implements IRestaurant {
 
 	@Override
 	public boolean occupyTable(int nTable, int nPeople, int nChildren) {
-		if (nTable < 1 || nTable > nTables || (getActualCapacity() < nPeople + nChildren)) {
+		if (nTable < 1 || nTable > nTables || (getActualCapacity() < nPeople)) {
 			return false;
 		}
 		if (tables[nTable - 1] != null) {
 			return false;
 		}
+		tables[nTable - 1] = new Service(nPeople, nChildren);
+		nClients += nPeople;
 		return true;
 
 	}
+
+	
 
 }

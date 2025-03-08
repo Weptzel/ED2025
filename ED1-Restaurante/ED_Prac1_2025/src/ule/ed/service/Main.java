@@ -7,7 +7,7 @@ public class Main {
         
         // Crear platos
         Dish dish1 = new Dish("Pizza", 1.0); // Un plato de pizza con precio 10.5
-        Dish dish2 = new Dish("Pasta", 1.0);  // Un plato de pasta con precio 8.0
+        Dish dish2 = new Dish("Pizza", 1.0);  // Un plato de pasta con precio 8.0
         
         // Agregar platos al servicio (mesa)
         service.getOrder().add(dish1);
