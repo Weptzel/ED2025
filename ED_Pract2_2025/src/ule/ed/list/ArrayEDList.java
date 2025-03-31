@@ -351,7 +351,7 @@ public class ArrayEDList<T> implements EDList<T> {
 
 	public String toString() {
 		// TODO
-		return null;
+		return "toString()";
 
 	}
 
@@ -462,7 +462,7 @@ public class ArrayEDList<T> implements EDList<T> {
 	@Override
 	public Iterator<T> repeatNiterator(int n) {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayListNRepeatIterator<>(n);
 	}
 
 }
