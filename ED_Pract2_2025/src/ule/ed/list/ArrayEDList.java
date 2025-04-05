@@ -68,7 +68,7 @@ public class ArrayEDList<T> implements EDList<T> {
 		public boolean hasNext() {
 			// TODO
 
-			return count < data.length;
+			return count < data.length && data[count] != null;
 		}
 
 		@Override
@@ -96,7 +96,7 @@ public class ArrayEDList<T> implements EDList<T> {
 		}
 
 		public boolean hasNext(){
-			return count < data.length;
+			return count < data.length && data[count] != null;
 		}
 
 		public T next(){
@@ -150,7 +150,7 @@ public class ArrayEDList<T> implements EDList<T> {
 	public void clear() {
 		// TODO
 		count = 0;
-		for (int i = 0; i < data.length; i++) {
+		for (int i = 0; i < count; i++) {
 			data[i] = null;
 		}
 
@@ -161,6 +161,9 @@ public class ArrayEDList<T> implements EDList<T> {
 		// TODO
 		if (elem == null) {
 			throw new NullPointerException();
+		}
+		if(size() == data.length){
+			resize();
 		}
 		/* desplazar a la derecha todos los elementos */
 		for (int i = size(); i > 0; i--) {
@@ -178,6 +181,9 @@ public class ArrayEDList<T> implements EDList<T> {
 		if (elem == null) {
 			throw new NullPointerException();
 		}
+		if(size() == data.length){
+			resize();
+		}
 		data[count] = elem;
 		count++;
 	}
@@ -188,16 +194,16 @@ public class ArrayEDList<T> implements EDList<T> {
 		if (elem == null) {
 			throw new NullPointerException();
 		}
-		/* si la lista esta vacia */
-		if (isEmpty()) {
-			addFirst(elem);
+		if(data.length == size()){
+			resize();
 		}
-		/* Si solo hay un elemento */
-		if (size() == 1) {
+		/* si la lista esta vacia o solo hay un elemento*/
+		if (isEmpty() || size() == 1) {
 			addFirst(elem);
+			return;
 		}
 		/* desplazar a la derecha desde el penultimo */
-		for (int i = size(); i > size() - 1; i--) {
+		for (int i = count; i > count - 1; i--) {
 			data[i] = data[i - 1];
 		}
 		data[count - 1] = elem;
@@ -210,20 +216,23 @@ public class ArrayEDList<T> implements EDList<T> {
 		if(elem == null) {
 			throw new NullPointerException();
 		}
-		if(position < 0) {
+		if(position <= 0 ) {
 			throw new IllegalArgumentException();
 		}
-		if(position == 0){
-			addFirst(elem);
+		if(count == data.length){
+			resize();
 		}
-		if(position >= size()){
+
+		if(position > size()){
 			addLast(elem);
+			return;
 		}
-		/* desplazar a la derecha desde la posicion */
-		for(int i = size(); i > position; i--){
+
+		/* desplazar a la derecha desde la posicion - 1 */
+		for(int i = count; i >= position; i--){
 			data[i] = data[i - 1];
 		}
-		data[position] = elem;
+		data[position - 1] = elem;
 		count++;
 	}
 
@@ -235,7 +244,7 @@ public class ArrayEDList<T> implements EDList<T> {
 		}
 		T elem = data[0];
 		/* desplazar a la izquierda todos los elementos */
-		for(int i = 0; i < size() - 1; i++) {
+		for(int i = 0; i < count - 1; i++) {
 			data[i] = data[i + 1];
 		}
 		data[count - 1] = null; /* Eliminar la referencia al ultimo elemento */
@@ -261,12 +270,15 @@ public class ArrayEDList<T> implements EDList<T> {
 		if(isEmpty()) {
 			throw new EmptyCollectionException("ArrayEDList");
 		}
+		if(size() == 1) {
+			throw new NoSuchElementException();
+		}
 		if(size() == 2) {
 			return removeFirst();
 		}
 		T elem = data[count - 2];
 		/* desplazar a la izquierda desde el penultimo */
-		for(int i = size(); i > size() - 1; i++) {
+		for(int i = count - 2; i > count - 1; i++) {
 			data[i] = data[i + 1];
 		}
 		data[count - 1] = null;
@@ -277,7 +289,6 @@ public class ArrayEDList<T> implements EDList<T> {
 	@Override
 	public T removeElem(T elem) throws EmptyCollectionException {
 		// TODO
-		int position = 0;
 		if(isEmpty()){
 			throw new EmptyCollectionException("ArrayEDList");
 		}
@@ -286,9 +297,14 @@ public class ArrayEDList<T> implements EDList<T> {
 			throw new NullPointerException();
 		}
 		/* Buscar primera posicion del elemento */
-		position = getPosFirst(elem);
+		int position = getPosFirst(elem) - 1;
+
+		if(position < 0){
+			throw new NoSuchElementException();
+		}
+
 		/* Mover elementos desde la primera aparicion hasta el final a la izquierda */
-		for(int i = position; i < size() - 1; i++){
+		for(int i = position; i < count - 1; i++){
 			data[i] = data[i + 1];
 		}
 		data[count - 1] = null;
@@ -299,8 +315,8 @@ public class ArrayEDList<T> implements EDList<T> {
 	@Override
 	public T getElemPos(int position) {
 		// TODO
-		if(position < 0 || position >= size()) {
-			throw new IndexOutOfBoundsException();
+		if(position < 1 || position > size()) {
+			throw new IllegalArgumentException();
 		}
 		return data[position];
 	}
@@ -308,32 +324,30 @@ public class ArrayEDList<T> implements EDList<T> {
 	@Override
 	public int getPosFirst(T elem) {
 		// TODO
-		int pos = 0;
-		boolean found = false; 
 		if(elem == null){
 			throw new NullPointerException();
 		}
 
 		for(int i = 0; i < size(); i++){
-			if(data[i] == elem && !found){
-				pos = i;
+			if(data[i].equals(elem)){
+				return i + 1;
 			}
 		}
-		return pos;
+		throw new NoSuchElementException();
 	}
 
 	@Override
 	public int getPosLast(T elem) {
 		// TODO
-		int pos = 0;
-		boolean found = false;
-
-		for(int i = size(); i > 0; i--){
-			if(data[i] == elem && !found){
-				pos = i;
+		if(elem == null){
+			throw new NullPointerException();
+		}
+		for(int i = size() - 1; i >= 0; i--){
+			if(data[i].equals(elem)){
+				return i + 1;
 			}
 		}
-		return pos;
+		throw new NoSuchElementException();
 	}
 
 	@Override
@@ -351,8 +365,20 @@ public class ArrayEDList<T> implements EDList<T> {
 
 	public String toString() {
 		// TODO
-		return "toString()";
+		if(isEmpty()) {
+			return "()";
+		}
+		StringBuilder sb = new StringBuilder("(");
+		
+		for(int i = 0; i < size(); i++){
+			sb.append(data[i].toString());
+			if(i < size() - 1){
+				sb.append(" ");
+			}
+		}
 
+		sb.append(" )");
+		return sb.toString();
 	}
 
 	@Override
@@ -378,12 +404,13 @@ public class ArrayEDList<T> implements EDList<T> {
 	public int removeLastElem(T elem) throws EmptyCollectionException {
 		// TODO
 		int position = 0;
-		if(isEmpty()){
-			throw new EmptyCollectionException("ArrayEDList");
-		}
 		if(elem == null){
 			throw new NullPointerException();
 		}
+		if(isEmpty()){
+			throw new EmptyCollectionException("ArrayEDList");
+		}
+		
 		/* Encontrar ultima posicion */
 		position = getPosLast(elem);
 
@@ -399,7 +426,39 @@ public class ArrayEDList<T> implements EDList<T> {
 	@Override
 	public int removeN(T elem, int n) {
 		// TODO Auto-generated method stub
-		return 0;
+		if(elem == null){
+			throw new NullPointerException();
+		}
+		int countElem = 0;
+		for(int i = 0; i < size(); i++){
+			if(data[i].equals(elem)){
+				countElem++;
+			}
+		}
+
+		if(countElem == 0){
+			throw new NoSuchElementException();
+		}
+
+		if(n > countElem){
+			n = countElem;
+		}
+
+		int countRemoved = 0;
+
+		for(int i = 0; i < size() && countRemoved < n; i++){
+			if(data[i].equals(elem)){
+				/* Desplazar a la izquierda */
+				for(int j = i; j < size() - 1; j++){
+					data[j] = data[j + 1];
+				}
+				data[count - 1] = null;
+				count--;
+				countRemoved++;
+				i--;
+			}
+		}
+		return countRemoved;
 	}
 
 	@Override
@@ -455,7 +514,6 @@ public class ArrayEDList<T> implements EDList<T> {
 				}
 			}
 		}
-		// TODO Auto-generated method stub
 		return menosFrecuente;
 	}
 
@@ -463,6 +521,15 @@ public class ArrayEDList<T> implements EDList<T> {
 	public Iterator<T> repeatNiterator(int n) {
 		// TODO Auto-generated method stub
 		return new ArrayListNRepeatIterator<>(n);
+	}
+
+	public void resize() {
+		// TODO
+		T[] newData = (T[]) (new Object[data.length * 2]);
+		for(int i = 0; i < data.length; i++){
+			newData[i] = data[i];
+		}
+		data = newData;
 	}
 
 }
