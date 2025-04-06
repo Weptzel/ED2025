@@ -35,7 +35,7 @@ public class ArrayEDList<T> implements EDList<T> {
 		public boolean hasNext() {
 			// TODO
 
-			return count < data.length;
+			return count < data.length && data[count] != null;	
 		}
 
 		@Override
@@ -61,7 +61,7 @@ public class ArrayEDList<T> implements EDList<T> {
 		public ArrayListOddIterator(T[] data) {
 			// TODO
 			this.data = data;
-			this.count = 1;
+			this.count = 0;
 		}
 
 		@Override
@@ -92,7 +92,7 @@ public class ArrayEDList<T> implements EDList<T> {
 		private T[] data;
 
 		public ArrayListEvenIterator(T[] data) {
-			this.count = 0;
+			this.count = 1;
 			this.data = data;
 		}
 
@@ -213,7 +213,7 @@ public class ArrayEDList<T> implements EDList<T> {
 		}
 		int penultPos = count - 1;
 		/* desplazar a la derecha desde el penultimo */
-		for (int i = count; i > count - penultPos; i--) {
+		for (int i = count; i > penultPos; i--) {
 			data[i] = data[i - 1];
 		}
 		data[penultPos] = elem;
@@ -328,7 +328,7 @@ public class ArrayEDList<T> implements EDList<T> {
 		if (position < 1 || position > size()) {
 			throw new IllegalArgumentException();
 		}
-		return data[position];
+		return data[position - 1];
 	}
 
 	@Override
@@ -476,12 +476,12 @@ public class ArrayEDList<T> implements EDList<T> {
 	}
 
 	@Override
-	public T mostFrequent() {
-		/*
-		 * if (isEmpty()) {
-		 * throw new EmptyCollectionException("ArrayEDList");
-		 * }
-		 */
+	public T mostFrequent() throws EmptyCollectionException {
+		
+		  if (isEmpty()) {
+		  throw new EmptyCollectionException("ArrayEDList");
+		  }
+		 
 
 		T masFrecuente = null;
 		int maxFrecuencia = 0;
@@ -517,12 +517,12 @@ public class ArrayEDList<T> implements EDList<T> {
 	}
 
 	@Override
-	public T leastFrequent() {
-		/*
-		 * if(isEmpty()){
-		 * throw new EmptyCollectionException("ArrayEDList");
-		 * }
-		 */
+	public T leastFrequent() throws EmptyCollectionException {
+		
+		 if(isEmpty()){
+		  throw new EmptyCollectionException("ArrayEDList");
+		 }
+		 
 		T menosFrecuente = null;
 		int minFrecuencia = Integer.MAX_VALUE; // Inicializar con el valor máximo posible
 
@@ -556,7 +556,7 @@ public class ArrayEDList<T> implements EDList<T> {
 		return new ArrayListNRepeatIterator<>(n);
 	}
 
-	public void resize() {
+	private void resize() {
 		// TODO
 		T[] newData = (T[]) (new Object[data.length * 2]);
 		for (int i = 0; i < data.length; i++) {

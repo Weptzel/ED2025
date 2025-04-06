@@ -270,7 +270,7 @@ public interface EDList<T> {
 	 * 
 	 * @throws EmptyCollectionException si la lista está vacía.
 	 */
-	public T mostFrequent();
+	public T mostFrequent() throws EmptyCollectionException;
 	
 	/**
 	 * Devuelve el elemento menos frecuente en la lista.
@@ -283,7 +283,7 @@ public interface EDList<T> {
 	 * 
 	 * @throws EmptyCollectionException si la lista está vacía.
 	 */
-	public T leastFrequent();
+	public T leastFrequent() throws EmptyCollectionException;
 	
 	/**
 	 * Devuelve un iterador que recorre la lista desde el primero hasta el último

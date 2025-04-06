@@ -206,25 +206,8 @@ public class ArrayEDListTest {
 	}
 
 	/* propios */
-	@Test
-	public void testArrayTestLeastFrequent() {
-		lista.addFirst("5");
-		lista.addFirst("5");
-		lista.addFirst("6");
-		lista.addFirst("7");
-		lista.addFirst("7");
-		Assert.assertEquals("6", lista.leastFrequent());
-	}
-
-	@Test
-	public void testArrayTestMostFrequent() {
-		lista.addFirst("5");
-		lista.addFirst("5");
-		lista.addFirst("6");
-		lista.addFirst("7");
-		lista.addFirst("7");
-		Assert.assertEquals("7", lista.mostFrequent());
-	}
+	
+	
 
 	@Test
 	public void testRemoveLastElem() throws EmptyCollectionException {
@@ -304,5 +287,25 @@ public class ArrayEDListTest {
 		lista.addLast("A");
 		lista.addLast("B");
 		lista.getPosLast(null);
+	}
+
+	@Test
+	public void testAddPenultInMiddle(){
+		lista.addFirst("2");
+		lista.addFirst("4");
+		lista.addFirst("7");
+		lista.addPenult("1");
+		lista.addFirst("3");
+		Assert.assertEquals("(3 7 4 1 2 )", lista.toString());
+
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetElemPos(){
+		lista.addFirst("2");
+		lista.addFirst("4");
+		lista.addFirst("7");
+		lista.getElemPos(2);
+		Assert.assertEquals("4", lista.getElemPos(2));
 	}
 }

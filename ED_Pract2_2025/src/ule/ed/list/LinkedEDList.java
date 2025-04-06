@@ -123,44 +123,45 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	// AÑADIR RESTO DE CLASES DE ITERADORE
 
-private class LinkedListRepeatNiterator implements Iterator<T> {
-    private Node<T> current; // Nodo actual que se está iterando
-    private int count;       // Contador para las repeticiones de cada elemento
-    private final int n;     // Número de repeticiones por elemento
+	private class LinkedListRepeatNiterator implements Iterator<T> {
+		private Node<T> current; // Nodo actual que se está iterando
+		private int count; // Contador para las repeticiones de cada elemento
+		private final int n; // Número de repeticiones por elemento
 
-    public LinkedListRepeatNiterator(int n) {
-        this.current = front; // Comienza desde el primer nodo
-        this.count = 0;       // Inicializa el contador de repeticiones
-        this.n = n;           // Almacena el número de repeticiones
-    }
+		public LinkedListRepeatNiterator(int n) {
+			this.current = front; // Comienza desde el primer nodo
+			this.count = 0; // Inicializa el contador de repeticiones
+			this.n = n; // Almacena el número de repeticiones
+		}
 
-    @Override
-    public boolean hasNext() {
-        // Hay más elementos si el nodo actual no es nulo
-        return current != null;
-    }
+		@Override
+		public boolean hasNext() {
+			// Hay más elementos si el nodo actual no es nulo
+			return current != null;
+		}
 
-    @Override
-    public T next() {
-        if (!hasNext()) {
-            throw new NoSuchElementException();
-        }
+		@Override
+		public T next() {
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
 
-        // Obtener el elemento actual
-        T elem = current.elem;
+			// Obtener el elemento actual
+			T elem = current.elem;
 
-        // Incrementar el contador de repeticiones
-        count++;
+			// Incrementar el contador de repeticiones
+			count++;
 
-        // Si se han alcanzado las n repeticiones, avanzar al siguiente nodo
-        if (count == n) {
-            current = current.next;
-            count = 0; // Reiniciar el contador para el siguiente nodo
-        }
+			// Si se han alcanzado las n repeticiones, avanzar al siguiente nodo
+			if (count == n) {
+				current = current.next;
+				count = 0; // Reiniciar el contador para el siguiente nodo
+			}
 
-        return elem;
-    }
-}
+			return elem;
+		}
+	}
+
 	///////
 	@Override
 	public int size() {
@@ -239,7 +240,7 @@ private class LinkedListRepeatNiterator implements Iterator<T> {
 		}
 		Node<T> newNode = new Node<T>(elem);
 		if (isEmpty()) {
-		addFirst(elem);
+			addFirst(elem);
 			return;
 		}
 		/* un elemento */
@@ -261,20 +262,22 @@ private class LinkedListRepeatNiterator implements Iterator<T> {
 		if (elem == null) {
 			throw new NullPointerException();
 		}
-		if (position < 0) {
+		if (position <= 0) {
 			throw new IllegalArgumentException();
 		}
-		if (position == 0) {
+
+		if (position == 1) {
 			addFirst(elem);
 			return;
 		}
+
 		if (position > size()) {
 			addLast(elem);
 			return;
 		}
 		Node<T> newNode = new Node<T>(elem);
 		Node<T> current = front;
-		int i = 0;
+		int i = 1;
 		while (i < position - 1) {
 			current = current.next;
 			i++;
@@ -324,7 +327,7 @@ private class LinkedListRepeatNiterator implements Iterator<T> {
 		}
 		/* Un elemento */
 		if (front.next == null) {
-			throw new EmptyCollectionException("LinkedEDList no tiene para borrar penul");
+			throw new NoSuchElementException();
 		}
 		/* Dos elementos */
 		if (front.next.next == null) {
@@ -350,51 +353,52 @@ private class LinkedListRepeatNiterator implements Iterator<T> {
 		if (elem == null) {
 			throw new NullPointerException();
 		}
-		if(front.elem.equals(elem)) {
+		if (front.elem.equals(elem)) {
 			return removeFirst();
 		}
 		Node<T> current = front;
 		Node<T> previous = null;
-		while (current != null && !current.next.elem.equals(elem)) {
+		while (current != null && !current.elem.equals(elem)) {
+			previous = current;
 			current = current.next;
-			pos++;
 		}
-		if (current.next != null) {
-			current.next = current.next.next;
-		}else{
+		if (current == null) {
 			throw new NoSuchElementException("Elemento no encontrado");
 		}
+	
+		previous.next = current.next;
+	
 		return current.elem;
 	}
 
 	@Override
 	public T getElemPos(int position) {
 		// TODO
-		if(position < 0 || position >= size()){
+		if (position < 1 || position > size()) {
 			throw new IllegalArgumentException();
 		}
 		Node<T> current = front;
-		int index = 0;
+		int index = 1;
 		while (current != null) {
-			if(index == position) {
+			if (index == position) {
 				return current.elem;
 			}
 			current = current.next;
 			index++;
 		}
-		throw new NoSuchElementException();
+		throw new IllegalArgumentException();
 	}
 
 	@Override
 	public int getPosFirst(T elem) {
 		// TODO
-		if(elem == null) {
+		if (elem == null) {
 			throw new NullPointerException();
 		}
 		Node<T> current = front;
-		int index = 0;
+		int index = 1;
 		while (current != null) {
-			if(current.elem.equals(elem)) {
+			if (current.elem.equals(elem)) {
 				return index;
 			}
 			current = current.next;
@@ -410,7 +414,7 @@ private class LinkedListRepeatNiterator implements Iterator<T> {
 			throw new NullPointerException();
 		}
 		Node<T> current = front;
-		int index = 0;
+		int index = 1;
 		int lastIndex = -1;
 		while (current != null) {
 			if (current.elem.equals(elem)) {
@@ -433,16 +437,16 @@ private class LinkedListRepeatNiterator implements Iterator<T> {
 			return listRev;
 		}
 		Node<T> current = front;
-		while(current != null){
+		while (current != null) {
 			listRev.addFirst(current.elem);
 			current = current.next;
-		} 
+		}
 		return listRev;
 	}
 
 	public String toString() {
 		// TODO
-		if(isEmpty()) {
+		if (isEmpty()) {
 			return "()";
 		}
 		StringBuilder sb = new StringBuilder();
@@ -478,20 +482,21 @@ private class LinkedListRepeatNiterator implements Iterator<T> {
 
 	@Override
 	public int removeLastElem(T elem) throws EmptyCollectionException {
-		if (isEmpty()) {
-			throw new EmptyCollectionException("La lista está vacía");
-		}
 		if (elem == null) {
 			throw new NullPointerException("El elemento no puede ser null");
 		}
-	
+		
+		if (isEmpty()) {
+			throw new EmptyCollectionException("La lista está vacía");
+		}
+		
 		Node<T> current = front;
 		Node<T> previous = null;
 		Node<T> lastMatch = null;
 		Node<T> lastMatchPrevious = null;
 		int index = 0;
 		int lastMatchIndex = -1;
-	
+
 		// Recorrer la lista para encontrar la última aparición del elemento
 		while (current != null) {
 			if (current.elem.equals(elem)) {
@@ -503,63 +508,131 @@ private class LinkedListRepeatNiterator implements Iterator<T> {
 			current = current.next;
 			index++;
 		}
-	
+
 		if (lastMatch == null) {
 			throw new NoSuchElementException("El elemento no está en la lista");
 		}
-	
+
 		/* Eliminar el nodo que contiene la última aparición del elemento */
 		if (lastMatchPrevious == null) {
 			front = front.next;
 		} else {
 			lastMatchPrevious.next = lastMatch.next;
 		}
-	
+
 		return lastMatchIndex;
 	}
 
 	@Override
 	public int removeN(T elem, int n) {
 		// TODO Auto-generated method stub
-		return 0;
+
+		if (elem == null) {
+			throw new NullPointerException("El elemento no puede ser null");
+		}
+
+		/*
+		 * if (isEmpty()) {
+		 * throw new EmptyCollectionException("La lista está vacía");
+		 * }
+		 */
+
+		Node<T> current = front;
+		Node<T> previous = null;
+		int eliminados = 0;
+		boolean encontrado = false;
+
+		while (current != null && eliminados < n) {
+			if (elem.equals(current.elem)) {
+				encontrado = true;
+				eliminados++;
+
+				if (current == front) {
+					front = current.next;
+					current = front;
+				} else {
+					previous.next = current.next;
+					current = previous.next;
+				}
+			} else {
+				previous = current;
+				current = current.next;
+			}
+		}
+		if (!encontrado) {
+			throw new NoSuchElementException("El elemento no está en la lista");
+		}
+		return eliminados;
 	}
 
 	@Override
-	public T mostFrequent() {
+	public T mostFrequent() throws EmptyCollectionException {
 		// TODO Auto-generated method stub
-		/*if(isEmpty()) {
-			throw new NoSuchElementException("La lista está vacía");
-		}*/
+		
+		  if(isEmpty()) {
+		  throw new EmptyCollectionException("La lista está vacía");
+		  }
+		 
 
 		Node<T> current = front;
 		T mostFrequentElem = null;
-		int maxFrecuencia = 0;	
-		
-		while(current != null){
+		int maxFrecuencia = 0;
+
+		while (current != null) {
 			T elem = current.elem;
 			int freqAux = 0;
 
 			Node<T> aux = front;
-			while(aux != null){
-				if(aux.elem.equals(elem)){
+			while (aux != null) {
+				if (aux.elem.equals(elem)) {
 					freqAux++;
 				}
 				aux = aux.next;
 			}
-			if(freqAux > maxFrecuencia){
+			if (freqAux > maxFrecuencia) {
 				maxFrecuencia = freqAux;
 				mostFrequentElem = elem;
 			}
 			current = current.next;
 		}
 		return mostFrequentElem;
-		
+
 	}
+
 	@Override
-	public T leastFrequent() {
+	public T leastFrequent() throws EmptyCollectionException {
 		// TODO Auto-generated method stub
-		T elem = front.elem;
-		return elem;
+		
+		 	if (isEmpty()) {
+		  throw new EmptyCollectionException("La lista está vacía");
+		  }
+		 
+
+		Node<T> current = front;
+		T leastFrequent = null;
+		int minFrequency = Integer.MAX_VALUE;
+
+		while (current != null) {
+			T currentElem = current.elem;
+			int currentFrequency = 0;
+
+			Node<T> temp = front;
+			while (temp != null) {
+				if (temp.elem.equals(currentElem)) {
+					currentFrequency++;
+				}
+				temp = temp.next;
+			}
+
+			if (currentFrequency < minFrequency) {
+				minFrequency = currentFrequency;
+				leastFrequent = currentElem;
+			}
+
+			current = current.next;
+		}
+
+		return leastFrequent;
 	}
 
 	@Override
