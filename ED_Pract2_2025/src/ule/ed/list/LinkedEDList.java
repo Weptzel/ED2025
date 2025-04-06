@@ -275,15 +275,12 @@ private class LinkedListRepeatNiterator implements Iterator<T> {
 		Node<T> newNode = new Node<T>(elem);
 		Node<T> current = front;
 		int i = 0;
-		while (current != null && i < position) {
-			if(i == position) {
-				newNode.next = current.next;
-				current.next = newNode;
-				break;
-			}
+		while (i < position - 1) {
+			current = current.next;
 			i++;
-		current = current.next;;
 		}
+		newNode.next = current.next;
+		current.next = newNode;
 	}
 
 	@Override
@@ -309,11 +306,13 @@ private class LinkedListRepeatNiterator implements Iterator<T> {
 			return elem;
 		}
 		Node<T> current = front;
+		Node<T> previous = null;
 		while (current.next != null) {
+			previous = current;
 			current = current.next;
 		}
 		T elem = current.elem;
-		current.next = null;
+		previous.next = null;
 		return elem;
 	}
 
@@ -332,10 +331,10 @@ private class LinkedListRepeatNiterator implements Iterator<T> {
 			return removeFirst();
 		}
 		Node<T> current = front;
-		while (current.next.next != null) {
+		while (current.next.next.next != null) {
 			current = current.next;
 		}
-		T elem = current.elem;
+		T elem = current.next.elem;
 		current.next = current.next.next;
 		return elem;
 
@@ -443,15 +442,20 @@ private class LinkedListRepeatNiterator implements Iterator<T> {
 
 	public String toString() {
 		// TODO
+		if(isEmpty()) {
+			return "()";
+		}
 		StringBuilder sb = new StringBuilder();
+		sb.append("(");
 		Node<T> current = front;
 		while (current != null) {
-			sb.append(current.elem);
-			if (current.next != null) {
-				sb.append(" ");
-			}
+			sb.append(current.elem).append(" ");
 			current = current.next;
 		}
+		if (sb.length() > 1) {
+			sb.deleteCharAt(sb.length() - 1); // Eliminar el último espacio
+		}
+		sb.append(" )");
 		return sb.toString();
 
 	}
@@ -523,10 +527,34 @@ private class LinkedListRepeatNiterator implements Iterator<T> {
 	@Override
 	public T mostFrequent() {
 		// TODO Auto-generated method stub
-		T elem = front.elem;
-		return elem;
-	}
+		/*if(isEmpty()) {
+			throw new NoSuchElementException("La lista está vacía");
+		}*/
 
+		Node<T> current = front;
+		T mostFrequentElem = null;
+		int maxFrecuencia = 0;	
+		
+		while(current != null){
+			T elem = current.elem;
+			int freqAux = 0;
+
+			Node<T> aux = front;
+			while(aux != null){
+				if(aux.elem.equals(elem)){
+					freqAux++;
+				}
+				aux = aux.next;
+			}
+			if(freqAux > maxFrecuencia){
+				maxFrecuencia = freqAux;
+				mostFrequentElem = elem;
+			}
+			current = current.next;
+		}
+		return mostFrequentElem;
+		
+	}
 	@Override
 	public T leastFrequent() {
 		// TODO Auto-generated method stub

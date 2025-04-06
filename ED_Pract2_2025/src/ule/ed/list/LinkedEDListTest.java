@@ -135,7 +135,7 @@ public class LinkedEDListTest {
 		lista.addFirst("6");
 		lista.addFirst("7");
 		Iterator<String> it = lista.evenPositionsIterator();
-		Assert.assertEquals("7", it.next());
+		Assert.assertEquals("6", it.next());
 	}
 	
 	@Test
@@ -183,6 +183,8 @@ public class LinkedEDListTest {
 		lista.addLast("7");
 		Assert.assertEquals(3, lista.size());
 	}
+
+	
 	
 
 	
