@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import ule.ed.doubleList.DoubleLinkedCircularList.DoubleNode;
+
 public class DoubleLinkedListImpl<T> implements IDoubleList<T> {
 
 	// referencia al primer nodo de la lista
@@ -34,19 +36,24 @@ public class DoubleLinkedListImpl<T> implements IDoubleList<T> {
 		DoubleNode<T> node;
 
 		public DoubleLinkedListIterator(DoubleNode<T> aux) {
-
+			this.node = aux;
 		}
 
 		@Override
 		public boolean hasNext() {
 			// TODO
-			return false;
+			return node != null;
 		}
 
 		@Override
 		public T next() {
 			// TODO
-			return null;
+			if(!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			T elem = node.elem;
+			node = node.next;
+			return elem;
 		}
 	}
 
@@ -57,23 +64,97 @@ public class DoubleLinkedListImpl<T> implements IDoubleList<T> {
 		DoubleNode<T> node;
 
 		public DoubleLinkedListIteratorReverse(DoubleNode<T> aux) {
-			// TODO
+			this.node = aux;
 		}
 
 		@Override
 		public boolean hasNext() {
 			// TODO
-			return false;
+			return node != null;
 		}
 
 		@Override
 		public T next() {
 			// TODO
-			return null;
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			T elem = node.elem;
+			node = node.prev;
+			return elem;
 		}
 	}
 
 	// TODO: añadir clases para el resto de iteradores
+
+
+	@SuppressWarnings("hiding")
+	private class DoubleLinkedListIteratorInstance<T> implements Iterator<T> {
+		private DoubleNode<T> current;
+		private int currentCount;
+		public DoubleLinkedListIteratorInstance(DoubleNode<T> start) {
+			this.current = start;
+			this.currentCount = (start != null) ? start.count : 0;
+		}
+
+		@Override
+		public boolean hasNext() {
+			// TODO
+			return current != null;
+		}
+
+		@Override
+		public T next() {
+			// TODO
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			T elem = current.elem;
+			currentCount--;
+			if (currentCount == 0) {
+				current = current.next;
+				if (current != null) {
+					currentCount = current.count;
+				}
+			}
+			return elem;
+		}
+	}
+
+
+	@SuppressWarnings("hiding")
+	private class DoubleLinkedListIteratorReverseInstance<T> implements Iterator<T> {
+		private DoubleNode<T> current;
+		private int currentCount;
+
+		public DoubleLinkedListIteratorReverseInstance(DoubleNode<T> start) {
+			this.current = start;
+			this.currentCount = (start != null) ? start.count : 0;
+		}
+
+		@Override
+		public boolean hasNext() {
+			// TODO
+			return current != null;
+		}
+
+		@Override
+		public T next() {
+			// TODO
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			T elem = current.elem;
+			currentCount--;
+			if (currentCount == 0) {
+				current = current.prev;
+				if (current != null) {
+					currentCount = current.count;
+				}
+			}
+			return elem;
+		}
+	}
 
 	/////
 
@@ -285,15 +366,55 @@ public class DoubleLinkedListImpl<T> implements IDoubleList<T> {
 	@Override
 	public int remove(T elem, int num) throws EmptyCollectionException {
 		// TODO Auto-generated method stub
-		return 0;
+		if (isEmpty()) {
+			throw new EmptyCollectionException("La lista está vacía");
+		}
+		if (elem == null) {
+			throw new NullPointerException("El elemento no puede ser null");
+		}
+		if (num <= 0) {
+			throw new IllegalArgumentException("El número de instancias a eliminar debe ser mayor que 0");
+		}
+	
+		DoubleNode<T> current = front;
+	
+		// Buscar el nodo que contiene el elemento
+		while (current != null) {
+			if (current.elem.equals(elem)) {
+
+				if (current.count > num) {
+					current.count -= num;
+					return num; 
+				}
+	
+				
+				int removedInstances = current.count; 
+				if (current.prev != null) {
+					current.prev.next = current.next;
+				} else {
+					front = current.next; 
+				}
+				if (current.next != null) {
+					current.next.prev = current.prev;
+				} else {
+					last = current.prev; 
+				}
+				return removedInstances; 
+			}
+			current = current.next;
+		}
+	
+		
+		throw new NoSuchElementException("El elemento no está en la lista");
+	
 	}
 
 	@Override
 	public T getElemPos(int position) {
 		// TODO Auto-generated method stub
 		int positionAux = Math.abs(position);
-		if (position == 0 || positionAux >= size()) {
-			throw new NoSuchElementException("Posición no válida");
+		if (position < 1 || positionAux >= size()) {
+			throw new IllegalArgumentException("Posición no válida");
 		}
 		DoubleNode<T> current;
 		if(position > 0) {
@@ -361,37 +482,74 @@ public class DoubleLinkedListImpl<T> implements IDoubleList<T> {
 	@Override
 	public String toStringReverse() {
 		// TODO Auto-generated method stub
-		return null;
+		if(last == null){
+			return "[]";
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		DoubleNode<T> current = last;
+		while (current != null) {
+			sb.append(current.elem).append(" (").append(current.count).append(")");
+			current = current.prev;
+			if (current != null) {
+				sb.append(" ");
+			}
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 
 	@Override
 	public ArrayList<T> listMaxRepeated() {
 		// TODO Auto-generated method stub
-		return null;
+		if(front == null){
+			return new ArrayList<>();
+		}
+
+		/* Buscar max de repes */
+		int maxCount = 0;
+		DoubleNode<T> current = front;
+		while (current != null) {
+			if (current.count > maxCount) {
+				maxCount = current.count;
+			}
+			current = current.next;
+		}
+
+		/* Obtener los elementos */
+		ArrayList<T> list = new ArrayList<>();
+		current = front;
+		while (current != null) {
+			if (current.count == maxCount) {
+				list.add(current.elem);
+			}
+			current = current.next;
+		}
+		return list;
 	}
 
 	@Override
 	public Iterator<T> iterator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new DoubleLinkedListIterator<>(front);
 	}
 
 	@Override
 	public Iterator<T> reverseIterator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new DoubleLinkedListIteratorReverse<>(last);
 	}
 
 	@Override
 	public Iterator<T> iteratorInstance() {
 		// TODO Auto-generated method stub
-		return null;
+		return new DoubleLinkedListIteratorInstance<>(front);
 	}
 
 	@Override
 	public Iterator<T> reverseIteratorInstance() {
 		// TODO Auto-generated method stub
-		return null;
+		return new DoubleLinkedListIteratorReverseInstance<>(last);
 	}
 
 }
