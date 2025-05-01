@@ -249,21 +249,22 @@ public class DoubleLinkedListImpl<T> implements IDoubleList<T> {
 		if (num <= 0) {
 			throw new IllegalArgumentException("El número de instancias debe ser mayor que cero");
 		}
-
+	
 		DoubleNode<T> primero = front;
+	
 		if (primero.count > num) {
-			primero.count = -num;
-			return num;
+			primero.count -= num;
+			return num; 
 		}
-
-		int numInstancias = primero.count;
-		front = front.next;
+	
+		int numInstancias = primero.count; 
+		front = front.next; 
 		if (front != null) {
-			front.prev = null;
+			front.prev = null; 
 		} else {
-			last = null;
+			last = null; 
 		}
-		return numInstancias;
+		return numInstancias; 
 	}
 
 	@Override
@@ -322,7 +323,6 @@ public class DoubleLinkedListImpl<T> implements IDoubleList<T> {
 		DoubleNode<T> current;
 		int index;
 
-		// Si la posición es positiva, recorrer desde el inicio
 		if (pos > 0) {
 			current = front;
 			index = 1;
@@ -331,7 +331,6 @@ public class DoubleLinkedListImpl<T> implements IDoubleList<T> {
 				index++;
 			}
 		} else {
-			// Si la posición es negativa, recorrer desde el final
 			current = last;
 			index = -1;
 			while (index > pos) {
@@ -342,22 +341,20 @@ public class DoubleLinkedListImpl<T> implements IDoubleList<T> {
 
 		T elemento = current.elem;
 
-		// Caso 1: Reducir la multiplicidad si es mayor que `num`
 		if (current.count > num) {
 			current.count -= num;
 			return elemento;
 		}
 
-		// Caso 2: Eliminar el nodo si la multiplicidad es menor o igual a `num`
 		if (current.prev != null) {
 			current.prev.next = current.next;
 		} else {
-			front = current.next; // Actualizar `front` si es el primer nodo
+			front = current.next; 
 		}
 		if (current.next != null) {
 			current.next.prev = current.prev;
 		} else {
-			last = current.prev; // Actualizar `last` si es el último nodo
+			last = current.prev; 
 		}
 
 		return elemento;
@@ -378,7 +375,6 @@ public class DoubleLinkedListImpl<T> implements IDoubleList<T> {
 	
 		DoubleNode<T> current = front;
 	
-		// Buscar el nodo que contiene el elemento
 		while (current != null) {
 			if (current.elem.equals(elem)) {
 
@@ -412,24 +408,27 @@ public class DoubleLinkedListImpl<T> implements IDoubleList<T> {
 	@Override
 	public T getElemPos(int position) {
 		// TODO Auto-generated method stub
-		int positionAux = Math.abs(position);
-		if (position < 1 || positionAux >= size()) {
-			throw new IllegalArgumentException("Posición no válida");
-		}
-		DoubleNode<T> current;
-		if(position > 0) {
-			current = front;
-			for (int i = 0; i < positionAux; i++) {
-				current = current.next;
-			}
-			return current.elem;
-		} else {
-			current = last;
-			for (int i = -1; i > positionAux; i--) {
-				current = current.prev;
-			}
-			return current.elem;
-		}
+		int size = size();
+
+    if (position == 0 || Math.abs(position) > size) {
+        throw new IllegalArgumentException("Posición no válida");
+    }
+
+    DoubleNode<T> current;
+
+    if (position > 0) {
+        current = front;
+        for (int i = 1; i < position; i++) {
+            current = current.next;
+        }
+    } else {
+        current = last;
+        for (int i = -1; i > position; i--) {
+            current = current.prev;
+        }
+    }
+
+    return current.elem;
 		
 	}
 
@@ -482,20 +481,24 @@ public class DoubleLinkedListImpl<T> implements IDoubleList<T> {
 	@Override
 	public String toStringReverse() {
 		// TODO Auto-generated method stub
-		if(last == null){
+		if (last == null) {
 			return "[]";
 		}
+	
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
+	
 		DoubleNode<T> current = last;
+	
 		while (current != null) {
-			sb.append(current.elem).append(" (").append(current.count).append(")");
+			sb.append(current.elem).append("(").append(current.count).append(")");
 			current = current.prev;
 			if (current != null) {
-				sb.append(" ");
+				sb.append(" "); 
 			}
 		}
-		sb.append("]");
+	
+		sb.append(" ]"); 
 		return sb.toString();
 	}
 
@@ -551,5 +554,27 @@ public class DoubleLinkedListImpl<T> implements IDoubleList<T> {
 		// TODO Auto-generated method stub
 		return new DoubleLinkedListIteratorReverseInstance<>(last);
 	}
+
+	@Override
+public String toString() {
+	 if (isEmpty()) {
+        return "[]";
+    }
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("[");
+
+    DoubleNode<T> current = front;
+    while (current != null) {
+        sb.append(current.elem).append("(").append(current.count).append(")");
+        current = current.next;
+        if (current != null) {
+            sb.append(" "); 
+        }
+    }
+
+    sb.append(" ]"); 
+    return sb.toString();
+}
 
 }

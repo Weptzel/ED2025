@@ -287,8 +287,8 @@ public class DoubleLinkedCircularList<T> implements IDoubleList<T> {
 		}
 
 		int borradas = primero.count;
-		cab.next = primero.next; // Actualizar el puntero `next` del nodo cabecera
-		primero.next.prev = cab; // Actualizar el puntero `prev` del nuevo primer nodo
+		cab.next = primero.next;  
+		primero.next.prev = cab; 
 		return borradas;
 	}
 
@@ -322,8 +322,8 @@ public class DoubleLinkedCircularList<T> implements IDoubleList<T> {
 			return num;
 		}
 		int borradas = ultimo.count;
-		ultimo.prev.next = cab; // Actualizar el puntero `next` del nodo cabecera
-		cab.prev = ultimo.prev; // Actualizar el puntero `prev` del nodo cabecera
+		ultimo.prev.next = cab;
+		cab.prev = ultimo.prev;
 		return borradas;
 	}
 
@@ -486,13 +486,15 @@ public class DoubleLinkedCircularList<T> implements IDoubleList<T> {
 
 	@Override
 	public String toStringReverse() {
-		// TODO Auto-generated method stub
-		if (cab == null) {
+		if (cab == null || isEmpty()) {
 			return "[]";
 		}
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
+
 		DoubleNode<T> current = cab.prev;
+
 		while (current != cab) {
 			sb.append(current.elem).append("(").append(current.count).append(")");
 			current = current.prev;
@@ -500,7 +502,8 @@ public class DoubleLinkedCircularList<T> implements IDoubleList<T> {
 				sb.append(" ");
 			}
 		}
-		sb.append("]");
+
+		sb.append(" ]");
 		return sb.toString();
 	}
 
@@ -553,4 +556,25 @@ public class DoubleLinkedCircularList<T> implements IDoubleList<T> {
 		return new reverseIteratorInstance<T>(cab);
 	}
 
+	@Override
+	public String toString() {
+		if (isEmpty()) {
+			return "[]";
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+
+		DoubleNode<T> current = cab.next;
+		while (current != cab) {
+			sb.append(current.elem).append("(").append(current.count).append(")");
+			current = current.next;
+			if (current != cab) {
+				sb.append(" ");
+			}
+		}
+
+		sb.append(" ]");
+		return sb.toString();
+	}
 }
