@@ -23,28 +23,72 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public boolean isEmpty() {
 		// TODO 
-		return false;
+		return front != null;
 	}
 
 
 	@Override
 	public int size() {
 		// TODO RECURSIVAMENTE
-		return 0;
+		return sizeRecursivo(front)
+	}
+
+	public int sizeRecursivo(Node node){ 
+		if(node == null){
+			return 0;
+		}else{
+			return 1 + sizeRecursivo(node.next)
+		}
 	}
 
 
 	@Override
 	public void addLast(T elem) {
 		// TODO RECURSIVAMENTE
+		if(elem == null){
+			throw new NullPointerException();
+		}
+		if(isEmpty()){
+			front = new Node<>(elem)
+		}else{
+			return addLastRecursivo(front, elem)
+		}
 		
+	}
+
+	public void addLastRecursivo(Node node, T elem){
+		if(node.next == null){
+			Node nuevo = new Node<>(elem)
+			node.next = nuevo;
+		}else{
+			return addLastRecursivo(node.next, elem)
+		}
 	}
 
 	
 	@Override
 	public void addPos(T elem, int position) {
 		// TODO RECURSIVAMENTE
-		
+		if(elem == null){
+			throw new NullPointerException();
+		}
+		if(position <= 0){
+			throw new IllegalArgumentException();
+		}else{
+			return addPosRecursivo(front, elem, position);
+		}
+	}
+
+	public void addPosRecursivo(Node node, T elem, int position){
+		if(node == null){
+			throw new IllegalArgumenException();
+		}
+		else if(position == 1){
+			Node nuevo = new Node<>(elem)
+			nuevo.next = front.next;
+			front.next = nuevo;
+		}else{
+			return addPosRecursivo(node.next, elem, position - 1);
 	}
 
 	@Override
@@ -135,7 +179,11 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public T getLast() throws EmptyCollectionException {
 		// TODO RECURSIVAMENTE
-		return null;
+		if(isEmpty()){
+			return new EmptyCollectionException()
+				}else{
+			return getLastRecursivo(front)
+				}
 	}
 
 
