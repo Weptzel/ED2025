@@ -1,5 +1,7 @@
 package ule.ed.recursivelist;
 
+import java.util.NoSuchElementException;
+
 public class LinkedEDList<T> implements EDList<T> {
 
 	// referencia al primer de la lista
@@ -88,31 +90,134 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public boolean addBefore(T elem, T target) {
 		// TODO RECURSIVAMENTE
-		return false;
+		if(elem == null || target == null){
+			throw new NullPointerException();
+		}else{
+			return addBeforeRecursivo(front, null, elem, target);
+		}
+		
+	}
+
+	
+
+	private boolean addBeforeRecursivo(Node<T> node, Node<T> prev, T elem, T target) {
+		if(node == null){
+			Node<T> nuevo = new Node<>(elem);
+			if(prev == null){
+				front = nuevo;
+			}else{
+				nuevo.next = front;
+				front = nuevo;
+			}
+			return false;
+		}
+		if(node.elem.equals(target)){
+			Node<T> nuevo = new Node<>(elem);
+			nuevo.next = node;
+
+			if(prev == null){
+				front = nuevo;
+			}else{
+				prev.next = nuevo;
+			}
+			return true;
+		}
+
+		return addBeforeRecursivo(node.next, node, elem, target);
+		
 	}
 
 	@Override
 	public T getElemPos(int position) {
 		// TODO RECURSIVAMENTE
-		return null;
+		if(position < 1 || position > size()){
+			throw new IllegalArgumentException();
+		}
+		return getElemPosRecursivo(front, position);
+		
+	}
+
+	private T getElemPosRecursivo(Node<T> node, int position) {
+		// TODO Auto-generated method stub
+		if(position == 1){
+			return node.elem;
+		}
+		return getElemPosRecursivo(node.next, position - 1);
 	}
 
 	@Override
 	public int getPosFirst(T elem) {
 		// TODO RECURSIVAMENTE
-		return 0;
+		if(elem == null){
+			throw new NullPointerException();
+		}
+
+		return getPosFirstRecursivo(front, elem, 1);
 	}
+
+	private int getPosFirstRecursivo(Node<T> node, T elem, int pos) {
+		// TODO Auto-generated method stub
+		if(node == null){
+			throw new NoSuchElementException();
+		}
+		if(node.elem.equals(elem)){
+			return pos;
+		}
+
+		return getPosFirstRecursivo(node.next, elem, pos + 1);
+	}	
 
 	@Override
 	public int getPosLast(T elem) {
 		// TODO RECURSIVAMENTE
-		return 0;
+		if(elem == null){
+			throw new NullPointerException();
+		}
+		int posLast =  getPosLastRecursivo(front, elem, 1);
+		if(posLast == -1){
+			throw new NoSuchElementException();
+		}
+
+		return posLast;
+	}
+
+	private int getPosLastRecursivo(Node<T> node, T elem, int currentPos) {
+		// TODO Auto-generated method stub
+		if(node == null){
+			return -1;
+		}
+		
+		int pos = getPosLastRecursivo(node.next, elem, currentPos + 1);
+
+		if(pos != -1){
+			return pos;
+		}
+
+		if(node.elem.equals(elem)){
+			return currentPos;
+		}
+
+		return -1;
 	}
 
 	@Override
 	public T removelast() throws EmptyCollectionException {
 		// TODO RECURSIVAMENTE
-		return null;
+		if(isEmpty()){
+			throw new EmptyCollectionException("");
+		}
+
+		return removeLastRecursivo(front);
+	}
+
+	private T removeLastRecursivo(Node<T> node) {
+		// TODO Auto-generated method stub
+		if(node.next.next == null){
+			T elem = node.next.elem;
+			node.next = null;
+			return elem;
+		}
+		return removeLastRecursivo(node.next);
 	}
 
 	@Override
@@ -149,7 +254,43 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public boolean addBeforeAfter(T elemAdd, T elemSearch) {
 		// TODO RECURSIVAMENTE
-		return false;
+		if(elemAdd == null || elemSearch == null){
+			throw new NullPointerException();
+		}
+		return addBeforeAfterRecursivo(front, null, elemAdd, elemSearch);
+	}
+
+	private boolean addBeforeAfterRecursivo(Node<T> node, Node<T> prev, T elemAdd, T elemSearch) {
+		// TODO Auto-generated method stub
+		if(node == null){
+			Node<T> nuevo = new Node<>(elemAdd);
+			if(prev == null){
+				front = nuevo;
+			}else{
+				nuevo.next = front;
+				front = nuevo;
+			}
+			return false;
+		}
+
+		if(node.elem.equals(elemSearch)){
+			Node<T> nuevoBefore = new Node<>(elemAdd);
+			nuevoBefore.next = node;
+
+			if(prev == null){
+				front = nuevoBefore;
+			}else{
+				prev.next = nuevoBefore;
+			}
+
+			Node<T> nuevoAfter = new Node<>(elemAdd);
+			nuevoAfter.next = node.next;
+			node.next = nuevoAfter;
+
+			return true;
+		}
+
+		return addBeforeAfterRecursivo(node.next, node, elemAdd, elemSearch);
 	}
 
 	@Override
