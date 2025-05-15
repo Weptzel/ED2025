@@ -221,9 +221,30 @@ public class LinkedEDList<T> implements EDList<T> {
 	}
 
 	@Override
-	public int removeLastElem(T elem) {
+	public int removeLastElem(T elem) throws EmptyCollectionException {
 		// TODO RECURSIVAMENTE
-		return 0;
+		if(isEmpty()){
+			throw new EmptyCollectionException("");
+		}
+		int[] lastPos = {0};
+		front = removeLastElemRecursive(front, elem, 1, lastPos);
+		return lastPos[0];
+	}
+
+	private Node<T> removeLastElemRecursive(Node<T> node, T elem, int pos, int[] lastPos) {
+		// TODO Auto-generated method stub
+		if(node == null){
+			return null;
+		}
+
+		node.next = removeLastElemRecursive(node.next, elem, pos + 1, lastPos);
+
+		if(node.elem.equals(elem) && lastPos[0] == 0){
+			lastPos[0] = pos;
+			return node.next;
+		}
+
+		return node;
 	}
 
 	@Override
