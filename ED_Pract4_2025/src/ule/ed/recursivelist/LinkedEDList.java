@@ -250,19 +250,70 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public EDList<T> reverse() {
 		// TODO RECURSIVAMENTE
-		return null;
+		LinkedEDList<T> list = new LinkedEDList<>();
+		list.front = reverseRecursivo(this.front, null);
+		return list;
+	}
+
+	private LinkedEDList<T>.Node<T> reverseRecursivo(Node<T> node, Node<T> aux) {
+		// TODO Auto-generated method stub
+		if(node == null){
+			return aux;
+		}
+
+		Node<T> nuevo = new Node<>(node.elem);
+		nuevo.next = aux;
+		return reverseRecursivo(node.next, nuevo);
 	}
 
 	@Override
 	public int removeConsecDuplicates() throws EmptyCollectionException {
 		// TODO RECURSIVAMENTE
-		return 0;
+		if(isEmpty()){
+			throw new EmptyCollectionException("");
+		}
+		return removeConsecDuplicatesRecursivo(front);
+	}
+
+	private int removeConsecDuplicatesRecursivo(Node<T> node) {
+		// TODO Auto-generated method stub
+		if(node == null || node.next == null){
+			return 0;
+		}
+
+		if(node.elem.equals(node.next.elem)){
+			node.next = node.next.next;
+			return 1 + removeConsecDuplicatesRecursivo(node);
+		}else{
+			removeConsecDuplicatesRecursivo(node.next);
+		}
 	}
 
 	@Override
 	public int removeFirstElem(T elem) throws EmptyCollectionException {
 		// TODO RECURSIVAMENTE
-		return 0;
+		if(isEmpty()){
+			throw new EmptyCollectionException("");
+		}
+		int[] removedPos = {0};
+		front = removeFirstElemRecursivo(front, elem, 1, removedPos);
+		return removedPos[0];
+	}
+
+	private Node<T> removeFirstElemRecursivo(Node<T> node, T elem, int pos,
+			int[] removedPos) {
+		// TODO Auto-generated method stub
+			if(node == null){
+				return null;
+			}
+
+			if(node.elem.equals(elem) && removedPos[0] == 0){
+				removedPos[0] = pos;
+				return node.next;
+			}
+
+			node.next = removeFirstElemRecursivo(node.next, elem, pos + 1, removedPos);
+			return node;
 	}
 
 	@Override
