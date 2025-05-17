@@ -22,12 +22,11 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public boolean isEmpty() {
 		// TODO
-		return front != null;
+		return front == null;
 	}
 
 	@Override
 	public int size() {
-		// TODO RECURSIVAMENTE
 		return sizeRecursivo(front);
 	}
 
@@ -41,7 +40,6 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	@Override
 	public void addLast(T elem) {
-		// TODO RECURSIVAMENTE
 		if (elem == null) {
 			throw new NullPointerException();
 		}
@@ -64,7 +62,6 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	@Override
 	public void addPos(T elem, int position) {
-		// TODO RECURSIVAMENTE
 		if (elem == null) {
 			throw new NullPointerException();
 		}
@@ -89,7 +86,6 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	@Override
 	public boolean addBefore(T elem, T target) {
-		// TODO RECURSIVAMENTE
 		if(elem == null || target == null){
 			throw new NullPointerException();
 		}else{
@@ -129,7 +125,6 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	@Override
 	public T getElemPos(int position) {
-		// TODO RECURSIVAMENTE
 		if(position < 1 || position > size()){
 			throw new IllegalArgumentException();
 		}
@@ -138,7 +133,6 @@ public class LinkedEDList<T> implements EDList<T> {
 	}
 
 	private T getElemPosRecursivo(Node<T> node, int position) {
-		// TODO Auto-generated method stub
 		if(position == 1){
 			return node.elem;
 		}
@@ -147,7 +141,6 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	@Override
 	public int getPosFirst(T elem) {
-		// TODO RECURSIVAMENTE
 		if(elem == null){
 			throw new NullPointerException();
 		}
@@ -156,7 +149,6 @@ public class LinkedEDList<T> implements EDList<T> {
 	}
 
 	private int getPosFirstRecursivo(Node<T> node, T elem, int pos) {
-		// TODO Auto-generated method stub
 		if(node == null){
 			throw new NoSuchElementException();
 		}
@@ -169,7 +161,6 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	@Override
 	public int getPosLast(T elem) {
-		// TODO RECURSIVAMENTE
 		if(elem == null){
 			throw new NullPointerException();
 		}
@@ -182,7 +173,7 @@ public class LinkedEDList<T> implements EDList<T> {
 	}
 
 	private int getPosLastRecursivo(Node<T> node, T elem, int currentPos) {
-		// TODO Auto-generated method stub
+
 		if(node == null){
 			return -1;
 		}
@@ -202,7 +193,6 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	@Override
 	public T removelast() throws EmptyCollectionException {
-		// TODO RECURSIVAMENTE
 		if(isEmpty()){
 			throw new EmptyCollectionException("");
 		}
@@ -211,7 +201,6 @@ public class LinkedEDList<T> implements EDList<T> {
 	}
 
 	private T removeLastRecursivo(Node<T> node) {
-		// TODO Auto-generated method stub
 		if(node.next.next == null){
 			T elem = node.next.elem;
 			node.next = null;
@@ -222,9 +211,11 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	@Override
 	public int removeLastElem(T elem) throws EmptyCollectionException {
-		// TODO RECURSIVAMENTE
 		if(isEmpty()){
 			throw new EmptyCollectionException("");
+		}
+		if(elem == null){
+			throw new NullPointerException();
 		}
 		int[] lastPos = {0};
 		front = removeLastElemRecursive(front, elem, 1, lastPos);
@@ -232,9 +223,8 @@ public class LinkedEDList<T> implements EDList<T> {
 	}
 
 	private Node<T> removeLastElemRecursive(Node<T> node, T elem, int pos, int[] lastPos) {
-		// TODO Auto-generated method stub
 		if(node == null){
-			return null;
+			throw new NoSuchElementException();
 		}
 
 		node.next = removeLastElemRecursive(node.next, elem, pos + 1, lastPos);
@@ -249,14 +239,12 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	@Override
 	public EDList<T> reverse() {
-		// TODO RECURSIVAMENTE
 		LinkedEDList<T> list = new LinkedEDList<>();
 		list.front = reverseRecursivo(this.front, null);
 		return list;
 	}
 
 	private LinkedEDList<T>.Node<T> reverseRecursivo(Node<T> node, Node<T> aux) {
-		// TODO Auto-generated method stub
 		if(node == null){
 			return aux;
 		}
@@ -268,15 +256,13 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	@Override
 	public int removeConsecDuplicates() throws EmptyCollectionException {
-		// TODO RECURSIVAMENTE
 		if(isEmpty()){
 			throw new EmptyCollectionException("");
 		}
 		return removeConsecDuplicatesRecursivo(front);
 	}
 
-	private int removeConsecDuplicatesRecursivo(Node<T> node) {
-		// TODO Auto-generated method stub
+	private int removeConsecDuplicatesRecursivo(Node<T> node){ 
 		if(node == null || node.next == null){
 			return 0;
 		}
@@ -285,15 +271,17 @@ public class LinkedEDList<T> implements EDList<T> {
 			node.next = node.next.next;
 			return 1 + removeConsecDuplicatesRecursivo(node);
 		}else{
-			removeConsecDuplicatesRecursivo(node.next);
+			return removeConsecDuplicatesRecursivo(node.next);
 		}
 	}
 
 	@Override
 	public int removeFirstElem(T elem) throws EmptyCollectionException {
-		// TODO RECURSIVAMENTE
 		if(isEmpty()){
 			throw new EmptyCollectionException("");
+		}
+		if(elem == null){
+			throw new NullPointerException();
 		}
 		int[] removedPos = {0};
 		front = removeFirstElemRecursivo(front, elem, 1, removedPos);
@@ -302,9 +290,8 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	private Node<T> removeFirstElemRecursivo(Node<T> node, T elem, int pos,
 			int[] removedPos) {
-		// TODO Auto-generated method stub
 			if(node == null){
-				return null;
+				throw new NoSuchElementException();
 			}
 
 			if(node.elem.equals(elem) && removedPos[0] == 0){
@@ -318,14 +305,24 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	@Override
 	public String toString() {
-		// TODO RECURSIVAMENTE
+		if(isEmpty()){
+			return "()";
+		}
+		return "(" +  toStringRecursivo(front) + " )";
+	}
 
-		return null;
+	private String toStringRecursivo(Node<T> node) {
+		if(node == null){
+			return "";
+		}
+		if(node.next == null){
+			return node.elem.toString();
+		}
+		return node.elem.toString() + " " + toStringRecursivo(node.next);
 	}
 
 	@Override
 	public boolean addBeforeAfter(T elemAdd, T elemSearch) {
-		// TODO RECURSIVAMENTE
 		if(elemAdd == null || elemSearch == null){
 			throw new NullPointerException();
 		}
@@ -333,7 +330,6 @@ public class LinkedEDList<T> implements EDList<T> {
 	}
 
 	private boolean addBeforeAfterRecursivo(Node<T> node, Node<T> prev, T elemAdd, T elemSearch) {
-		// TODO Auto-generated method stub
 		if(node == null){
 			Node<T> nuevo = new Node<>(elemAdd);
 			if(prev == null){
@@ -367,7 +363,6 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	@Override
 	public T getLast() throws EmptyCollectionException {
-		// TODO RECURSIVAMENTE
 		if (isEmpty()) {
 			throw new EmptyCollectionException("");
 		} else {
@@ -385,32 +380,116 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	@Override
 	public int getIndexOfFirst(T elem) throws EmptyCollectionException {
-		// TODO RECURSIVAMENTE
-		return 0;
+		if(isEmpty()){
+			throw new EmptyCollectionException("");
+		}
+		if(elem == null){
+			throw new NullPointerException();
+		}
+		return getIndexOfFirstRecursivo(front, elem, 1);
+	}
+
+	private int getIndexOfFirstRecursivo (Node<T> node, T elem, int posi) throws EmptyCollectionException {
+		if(node == null){
+			throw new NoSuchElementException("");
+		}
+		if(node.elem.equals(elem)){
+			return posi;
+		}
+		return getIndexOfFirstRecursivo(node.next, elem, posi + 1);
 	}
 
 	@Override
 	public int getIndexOfLast(T elem) throws EmptyCollectionException {
-		// TODO RECURSIVAMENTE
-		return 0;
+		if(isEmpty()){
+			throw new EmptyCollectionException("");
+		}
+		if(elem == null){
+			throw new NullPointerException();
+		}
+		int aux = getIndexOfLastRecursivo(front, elem, 1);
+
+		if(aux == -1){
+			throw new NoSuchElementException("");
+		}
+		return aux;
+	}
+
+	private int getIndexOfLastRecursivo(Node<T> node, T elem, int pos) {
+		if(node == null){
+			return -1;
+		}
+		int last = getIndexOfLastRecursivo(node.next, elem, pos + 1);
+		if(last != -1){
+			return last;
+		}
+		if(node.elem.equals(elem)){
+			return pos;
+		}
+		return -1;
 	}
 
 	@Override
 	public String toStringAtPosMultiple(int n) {
-		// TODO RECURSIVAMENTE
-		return null;
+			if(n <= 0){
+				throw new IllegalArgumentException();
+			}
+			return "(" + toStringAtPosMultipleRecursivo(front, n, 1)  + ")";
+	}
+
+	private String toStringAtPosMultipleRecursivo(Node<T> node, int n, int pos) {
+		if(node == null){
+			return "";
+		}
+		if(pos % n == 0){
+			if(node.next == null || (pos + 1) % n != 0){
+				return node.elem.toString();
+			}
+			return node.elem.toString() + " " + toStringAtPosMultipleRecursivo(node.next, n, pos + 1);
+		}
+		return toStringAtPosMultipleRecursivo(node.next, n, pos + 1);
+		
 	}
 
 	@Override
 	public String toStringReverse() {
-		// TODO RECURSIVAMENTE
-		return null;
+		if(isEmpty()){
+			return "()";
+		}
+		return "(" + toStringReverseRecursivo(front) + " )";
+	}
+
+	private String toStringReverseRecursivo(Node<T> node) {
+		if(node == null){
+			return "";
+		}
+		String aux = toStringReverseRecursivo(node.next);
+		if(!aux.isEmpty()){
+			return aux + " " + node.elem.toString();
+		}
+		return node.elem.toString();
 	}
 
 	@Override
 	public int removeDuplicConsec(T elem) throws EmptyCollectionException {
-		// TODO RECURSIVAMENTE
-		return 0;
+		if(isEmpty()){
+			throw new EmptyCollectionException("");
+		}
+		if(elem == null){
+			throw new NullPointerException();
+		}
+		return removeDuplicConsecRecursivo(front, elem);
 	}
 
+	private int removeDuplicConsecRecursivo(Node<T> node, T elem) {
+		if(node == null || node.next == null){
+			return 0;
+		}
+		if(node.elem.equals(elem) && node.next.elem.equals(elem)){
+			node.next = node.next.next;
+			return 1 + removeDuplicConsecRecursivo(node, elem);
+		}else{
+			return removeDuplicConsecRecursivo(node.next, elem);
+		}
+	}
 }
