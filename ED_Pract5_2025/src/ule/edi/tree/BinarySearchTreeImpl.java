@@ -63,7 +63,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 */
 	public BinarySearchTreeImpl() {
 		// TODO HACER QUE THIS SEA EL NODO VACIO
-	   root =null;
+	   this.root =null;
 	}
 	
 	public int getMaxDegree() {
@@ -78,7 +78,10 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 */
 	public boolean isLeaf(BinaryTreeNode<T> node) {
 		// TODO Implementar el metodo
-	     return false;
+		if(node == null){
+			return false;
+		}
+	     return (node.left == null && node.right == null);
 	}
 	
 	/**
@@ -94,8 +97,33 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	public int insert(Collection<T> elements) {
 		// si alguno es 'null', no se inserta
 		// TODO Implementar el metodo
-         	return 0;
+		if(elements == null){
+			return 0;
+		}
+		int count = 0;
+		for(int i = 0; i < elements.size(); i++){
+			if(elements[i] != null){
+				root = insertCollectionRecursivo(root, elements);
+				count++;
+			}
+		}
+		return count;
        }
+	
+	   private BinaryTreeNode<T> insertCollectionRecursivo(BinaryTreeNode<T> node, T element){
+			if(node == null){
+				return new BinaryTreeNode<>(element);
+			}
+			int comparacion = element.compareTo(node.elem);
+			if(comparacion < 0){
+				node.left = insertCollectionRecursivo(node.left, elements);
+			}else if(comparacion > 0){
+				node.right = insertCollectionRecursivo(node.right, elements);
+			}else{
+				node.count++;
+			}
+			return node;
+	   }
 
 	/**
 	 * Inserta los elementos que no sean null, de un array en el arbol. 
@@ -108,11 +136,51 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 */
 	public int insert(T... elements) {
 		// TODO Implementar el metodo
-		   
-		
-		return 0;
+		if(elements == null){
+			return 0;
+		}
+		int count = 0;
+		for(int i = 0; i < elements.length: i++){
+			if(elements[i] != null && insertTRecursivo(elements)){
+				count++;
+			}
+		}
+		return count;
 
 	
+	}
+
+	private boolean insertTRecursivo(T element){
+		if(root == null){
+			root = new BinaryTreeNode<>(element);
+			return true;
+		}
+
+		BinaryTreeNode<T> current = root;
+		BinaryTreeNode<T> parent = null;
+		int comparacion = 0;
+
+		while(current != null){
+			parent = current;
+			comparacion = element.compareTo(current.elem);
+
+			if(comparacion < 0){
+				current = current.left;
+			}else if(comparacion > 0){
+				current = current.right;
+			}else{
+				current.count++;
+				return false;
+			}
+		}
+
+		BinaryTreeNode<T> nuevo = new BinaryTreeNode<>(element);
+		if(comparacion < 0){
+			parent.left = nuevo;
+		}else if(comparacion > 0){
+			parent.right = nuevo;
+		}
+		return true;
 	}
 
 	/**
