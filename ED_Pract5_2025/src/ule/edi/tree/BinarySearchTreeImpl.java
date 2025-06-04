@@ -100,9 +100,8 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 			return 0;
 		}
 		int count = 0;
-		for (int i = 0; i < elements.size(); i++) {
-			if (elements[i] != null) {
-				root = insertCollectionRecursivo(root, elements);
+		for (T element : elements) {
+			if (element != null && insert(element)) {
 				count++;
 			}
 		}
@@ -115,9 +114,9 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 		}
 		int comparacion = element.compareTo(node.elem);
 		if (comparacion < 0) {
-			node.left = insertCollectionRecursivo(node.left, elements);
+			node.left = insertCollectionRecursivo(node.left, element);
 		} else if (comparacion > 0) {
-			node.right = insertCollectionRecursivo(node.right, elements);
+			node.right = insertCollectionRecursivo(node.right, element);
 		} else {
 			node.count++;
 		}
@@ -139,8 +138,8 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 			return 0;
 		}
 		int count = 0;
-		for(int i = 0; i < elements.length: i++){
-			if(elements[i] != null && insertTRecursivo(elements)){
+		for(int i = 0; i < elements.length; i++){
+			if(elements[i] != null && insertTRecursivo(elements[i])){
 				count++;
 			}
 		}
@@ -220,7 +219,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 		if (element == null) {
 			throw new IllegalArgumentException("El elemento no puede ser nulo");
 		}
-		return containsRecursivo(raiz, element);
+		return containsRecursivo(root, element);
 	}
 
 	private boolean containsRecursivo(BinaryTreeNode<T> node, T element) {
@@ -390,52 +389,50 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * 
 	 */
 	public int remove(T element, int num) {
-		// TODO Implementar el metodo
-		if (element == null) {
-			throw new IllegalArgumentException("El elemento no puede ser nulo");
-		}
-		if (num <= 0) {
-			throw new IllegalArgumentException("El número de instancias a eliminar no puede ser menor o igual a cero");
-		}
-		int[] removed = { 0 };
-		root = removeRecursivo(root, element, num, removed);
-		if (removed[0] == 0) {
-			throw new NoSuchElementException("El elemento no se encuentra en el arbol");
-		}
-		return removed[0];
-	}
+    if (element == null) {
+        throw new IllegalArgumentException("El elemento no puede ser nulo");
+    }
+    if (num <= 0) {
+        throw new IllegalArgumentException("El número de instancias a eliminar no puede ser menor o igual a cero");
+    }
+    int[] removed = { 0 };
+    root = removeRecursivo(root, element, num, removed);
+    if (removed[0] == 0) {
+        throw new NoSuchElementException("El elemento no se encuentra en el arbol");
+    }
+    return removed[0];
+}
 
-	private BinaryTreeNode<T> removeRecursivo(BinaryTreeNode<T> node, T element, int num, int[] removed) {
-		if (node == null) {
-			return null;
-		}
-		int comparacion = element.compareTo(node.elem);
-		if (comparacion < 0) {
-			node.left = removeRecursivo(node, element, num, removed);
-		} else if (comparacion > 0) {
-			node.right = removeRecursivo(node.right, element, num, removed);
-		} else {
-			/* Encontrado el nodo */
-			int removeCount = Math.min(node.count);
-			removed[0] = removeCount;
-			node.count -= removeCount;
+private BinaryTreeNode<T> removeRecursivo(BinaryTreeNode<T> node, T element, int num, int[] removed) {
+    if (node == null) {
+        return null;
+    }
+    int comparacion = element.compareTo(node.elem);
+    if (comparacion < 0) {
+        node.left = removeRecursivo(node.left, element, num, removed); 
+    } else if (comparacion > 0) {
+        node.right = removeRecursivo(node.right, element, num, removed);
+    } else {
+        /* Encontrado el nodo */
+        int removeCount = Math.min(num, node.count); 
+        removed[0] = removeCount;
+        node.count -= removeCount;
 
-			if (node.count <= 0) {
-				if (node.left == null) {
-					return node.right;
-				} else if (node.right == null) {
-					return node.left;
-				} else {
-					/* tiene dos hijos, se sustituye por el menor de los mayores */
-					BinaryTreeNode<T> minNode = getMinNode(node.right);
-					node.elem = minNode.elem;
-					node.count = minNode.count;
-					node.right = removeRecursivo(node.right, minNode.elem, minNode.count, new int[1]);
-				}
-			}
-		}
-		return node;
-	}
+        if (node.count <= 0) {
+            if (node.left == null) {
+                return node.right;
+            } else if (node.right == null) {
+                return node.left;
+            } else {
+                BinaryTreeNode<T> minNode = getMinNode(node.right);
+                node.elem = minNode.elem;
+                node.count = minNode.count;
+                node.right = removeRecursivo(node.right, minNode.elem, minNode.count, new int[1]);
+            }
+        }
+    }
+    return node;
+}
 
 	private BinaryTreeNode<T> getMinNode(BinaryTreeNode<T> node) {
 		while (node.left != null) {
@@ -458,7 +455,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 */
 	public int removeAll(T element) {
 		// TODO Implementar el metodo
-		if (elemet == null) {
+		if (element == null) {
 			throw new IllegalArgumentException("El elemento no puede ser nulo");
 		}
 		int[] removed = { 0 };
@@ -634,7 +631,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 			return 0;
 		}
 		int removed[] = { 0 };
-		root = removeMinRec(root, removed);
+		root = removeAllMinRec(root, removed);
 		return removed[0];
 	}
 
@@ -667,8 +664,17 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * 
 	 */
 	public void tagHeight() {
-		// TODO implementar el metodo
-	}
+        tagHeightRec(root, 1);
+    }
+
+    private void tagHeightRec(BinaryTreeNode<T> node, int height) {
+        if (node == null) {
+            return;
+        }
+        node.setTag("height", height);
+        tagHeightRec(node.left, height + 1);
+        tagHeightRec(node.right, height + 1);
+    }
 
 	/**
 	 * Importante: Solamente se puede recorrer el arbol una vez
@@ -689,10 +695,21 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * }
 	 * 
 	 */
-	public void tagHeightLeaf() {
-		// TODO implementar el mÃ©todo
+	 public void tagHeightLeaf() {
+        tagHeightLeafRec(root, 1);
+    }
 
-	}
+    private void tagHeightLeafRec(BinaryTreeNode<T> node, int height) {
+        if (node == null) {
+            return;
+        }
+        if (node.left == null && node.right == null) {
+            node.setTag("height", height);
+        } else {
+            tagHeightLeafRec(node.left, height + 1);
+            tagHeightLeafRec(node.right, height + 1);
+        }
+    }
 
 	/**
 	 * Importante: Solamente se puede recorrer el arbol una vez
@@ -714,9 +731,24 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * 
 	 */
 	public int tagNodos2HijosInorden() {
-		// TODO EL MÉTODO
-		return 0;
-	}
+        int[] pos = {1};
+        int[] count = {0};
+        tagNodos2HijosInordenRec(root, pos, count);
+        return count[0];
+    }
+
+    private void tagNodos2HijosInordenRec(BinaryTreeNode<T> node, int[] pos, int[] count){
+        if(node == null){
+            return;
+        }
+        tagNodos2HijosInordenRec(node.left, pos, count);
+        if(node.left != null && node.right != null){
+            node.setTag("2Hijos", pos[0]);
+            count[0]++;
+        }
+        pos[0]++;
+        tagNodos2HijosInordenRec(node.right, pos, count);
+    }
 
 	/**
 	 * Importante: Solamente se puede recorrer el arbol una vez
@@ -738,9 +770,19 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * 
 	 */
 	public void tagPosPreorden() {
-		// TODO EL MÉTODO
-		return;
-	}
+        int[] pos = {1};
+        tagPosPreordenRec(root, pos);
+    }
+
+    private void tagPosPreordenRec(BinaryTreeNode<T> node, int[] pos) {
+        if (node == null) {
+            return;
+        }
+        node.setTag("preorden", pos[0]);
+        pos[0]++;
+        tagPosPreordenRec(node.left, pos);
+        tagPosPreordenRec(node.right, pos);
+    }
 
 	/**
 	 * Importante: Solamente se puede recorrer el arbol una vez
@@ -755,8 +797,28 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * 
 	 */
 	public T postordenN(int n) {
-		// TODO EL MÉTODO
-		return null;
-	}
+        if(n <= 0){
+            throw new IllegalArgumentException("La posición debe ser mayor que cero");
+        }
+        int[] pos = {1};
+        Object[] result = new Object[1];
+        postordenNRec(root, n, pos, result);
+        if (result[0] == null) {
+            throw new NoSuchElementException("No hay elemento en la posicion " + n + " en postorden");
+        }
+        return (T) result[0];
+    }
+
+    private void postordenNRec(BinaryTreeNode<T> node, int n, int[] pos, Object[] result) {
+        if (node == null || result[0] != null) {
+            return;
+        }
+        postordenNRec(node.left, n, pos, result);
+        postordenNRec(node.right, n, pos, result);
+        if (pos[0] == n) {
+            result[0] = node.elem;
+        }
+        pos[0]++;
+    }
 
 }
