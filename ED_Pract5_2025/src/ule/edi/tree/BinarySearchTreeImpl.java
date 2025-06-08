@@ -646,7 +646,7 @@ private BinaryTreeNode<T> removeRecursivo(BinaryTreeNode<T> node, T element, int
 		// TODO el método
 		int[] pos = {1};
 		int[] count = {0};
-		tagLeftChildrenPostorderRec(root, null, falsel, pos, count);
+		tagLeftChildrenPosOrdenRec(root, null, false, pos, count);
 		return count[0];
 	}
 
