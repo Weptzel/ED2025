@@ -201,7 +201,39 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 */
 	public boolean insert(T element) {
 		// TODO Implementar el metodo
-		return false;
+		if(element == null) {
+			throw new IllegalArgumentException("El elemento no puede ser nulo");
+		}
+
+		if(root == null){
+			root = new BinaryTreeNode<>(element);
+			return true;
+		}
+
+		BinaryTreeNode<T> current = root;
+		BinaryTreeNode<T> parent = null;
+
+		int comparacion = 0;
+		while(current != null){
+			parent = current;
+			comparacion = element.compareTo(current.elem);
+			if(comparacion < 0){
+				current = current.left;
+			} else if(comparacion > 0){
+				current = current.right;
+			} else {
+				current.count++;
+				return false; 
+			}
+		}
+
+		BinaryTreeNode<T> nuevo = new BinaryTreeNode<>(element);
+		if (comparacion < 0) {
+			parent.left = nuevo;
+		} else if (comparacion > 0) {
+			parent.right = nuevo;
+		}
+		return true;
 	}
 
 	/**
@@ -338,9 +370,14 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	public int remove(T... elements) {
 		// TODO Implementar el metodo
 		int numRemoved = 0;
-
+		if (elements == null) {
+			return numRemoved;
+		}
 		for (T elem : elements) {
-			// terminar de incorporar el código
+			if(elem != null && contains(elem)) {
+				remove(elem);
+				numRemoved++;
+			}
 		}
 
 		return numRemoved;
@@ -514,8 +551,30 @@ private BinaryTreeNode<T> removeRecursivo(BinaryTreeNode<T> node, T element, int
 	 */
 	public BinaryTreeNode<T> getSubtreeWithPath(String path) {
 		// TODO Implementar el metodo
+		if (path == null) {
+			throw new IllegalArgumentException("");
+		}
+		BinaryTreeNode<T> node = root;
+		if(node == null){
+			throw new NoSuchElementException("");
+		}
+		if(path.isEmpty()){
+			return node; // devuelve la raiz
+		}
 
-		return null;
+		for(char c : path.toCharArray()){
+			if(c == '0'){
+				node = node.left;
+			}else if(c == '1'){
+				node = node.right;
+			}else{
+				throw new IllegalArgumentException("");
+			}
+			if(node == null){
+				throw new NoSuchElementException("");
+			}
+		}
+		return node;
 	}
 
 	/**
@@ -545,7 +604,11 @@ private BinaryTreeNode<T> removeRecursivo(BinaryTreeNode<T> node, T element, int
 	 */
 	public T getContentWithPath(String path) {
 		// TODO implementar el método
-		return null;
+		BinaryTreeNode<T> node = getSubtreeWithPath(path);
+		if(node == null){
+			throw new NoSuchElementException("");
+		}
+		return node.elem;
 	}
 
 	/**
@@ -581,8 +644,23 @@ private BinaryTreeNode<T> removeRecursivo(BinaryTreeNode<T> node, T element, int
 	 */
 	public int tagLeftChildrenPostorder() {
 		// TODO el método
+		int[] pos = {1};
+		int[] count = {0};
+		tagLeftChildrenPostorderRec(root, null, falsel, pos, count);
+		return count[0];
+	}
 
-		return 0;
+	private void tagLeftChildrenPosOrdenRec(BinaryTreeNode<T> node, BinaryTreeNode<T> parent, boolean isLeft, int[] pos, int[] count){
+		if(node == null){
+			return;
+		}
+		tagLeftChildrenPosOrdenRec(node.left, node, true, pos, count);
+		tagLeftChildrenPosOrdenRec(node.right, node, false, pos, count);
+		if(parent != null && isLeft){
+			node.setTag("postorder", pos[0]);
+			count[0]++;
+		}
+		pos[0]++;
 	}
 
 	/**
@@ -606,7 +684,26 @@ private BinaryTreeNode<T> removeRecursivo(BinaryTreeNode<T> node, T element, int
 	 */
 	public String toStringSimetric(String path) {
 		// TODO el método
-		return "";
+		if (path == null) {
+        throw new IllegalArgumentException("El camino no puede ser nulo");
+    }
+    if (root == null) return "";
+    BinaryTreeNode<T> node = root;
+    for (char c : path.toCharArray()) {
+        if (c == '0') node = node.left;
+        else if (c == '1') node = node.right;
+        else throw new IllegalArgumentException("El camino solo puede contener 0s y 1s");
+        if (node == null) return "";
+    }
+    // Buscar el simétrico
+    BinaryTreeNode<T> simetric = root;
+    for (char c : path.toCharArray()) {
+        if (c == '0') simetric = simetric.right;
+        else if (c == '1') simetric = simetric.left;
+        if (simetric == null) return "";
+    }
+    if (simetric == root) return ""; // la raíz no tiene simétrico
+    return simetric.toString();
 	}
 
 	/**
@@ -743,7 +840,7 @@ private BinaryTreeNode<T> removeRecursivo(BinaryTreeNode<T> node, T element, int
         }
         tagNodos2HijosInordenRec(node.left, pos, count);
         if(node.left != null && node.right != null){
-            node.setTag("2Hijos", pos[0]);
+            node.setTag("2hijos", pos[0]);
             count[0]++;
         }
         pos[0]++;
